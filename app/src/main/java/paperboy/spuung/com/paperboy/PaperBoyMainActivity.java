@@ -3,20 +3,17 @@ package paperboy.spuung.com.paperboy;
 import java.util.Locale;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 
 
 public class PaperBoyMainActivity extends Activity {
@@ -31,6 +28,10 @@ public class PaperBoyMainActivity extends Activity {
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    private String finalURL = "";
+    private HandleXml obj;
+    private EditText title, link, description;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -41,7 +42,9 @@ public class PaperBoyMainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper_boy_main);
 
-
+        title = (EditText)findViewById(R.id.editText1);
+        link = (EditText)findViewById(R.id.editText2);
+        description = (EditText)findViewById(R.id.editText3);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -50,7 +53,6 @@ public class PaperBoyMainActivity extends Activity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
     }
 
 
@@ -67,13 +69,24 @@ public class PaperBoyMainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        /*if (id == R.id.action_settings) {
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);*/
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 
-    
+    public void fetch(View view) {
+        obj = new HandleXml(finalURL);
+        obj.fetchXml();
+        while(obj.parsingComplete) {
+            title.setText(obj.getTitle());
+            link.setText(obj.getLink());
+            description.setText(obj.getDescription());
+        }
+    }
+
+
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -103,11 +116,11 @@ public class PaperBoyMainActivity extends Activity {
             Locale l = Locale.getDefault();
             switch (position) {
                 case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
+                    return "Section1".toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
+                    return "Section 2".toUpperCase(l);
                 case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
+                    return "Section 3".toUpperCase(l);
             }
             return null;
         }
@@ -140,9 +153,10 @@ public class PaperBoyMainActivity extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_paper_boy_main, container, false);
-            return rootView;
+                                 Bundle savedInstanceState) {
+            /*View rootView = inflater.inflate(R.layout.fragment_paper_boy_main, container, false);
+            return rootView;*/
+            return inflater.inflate(R.layout.fragment_paper_boy_main, container, false);
         }
     }
 
